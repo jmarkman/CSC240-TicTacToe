@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TicTacToe</string>
+    <string name="action_settings">Settings</string>
+    <string name="reset_btn_text">Reset</string>
+    <string name="x_mark">X</string>
+    <string name="o_mark">O</string>
+</resources>
