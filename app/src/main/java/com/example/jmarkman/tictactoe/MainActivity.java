@@ -17,11 +17,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TableLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Button[] buttons;
     private boolean lastSelectionWasX;
 
     @Override
@@ -31,14 +33,22 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+/*        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
+
+        buttons = new Button[9];
+        int buttonId = R.id.tttBtn1;
+
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i] = findViewById(buttonId);
+            buttonId++;
+        }
     }
 
     @Override
@@ -79,14 +89,19 @@ public class MainActivity extends AppCompatActivity {
         String btnText = (String) btn.getText();
         if (btnText.contains("") && !lastSelectionWasX)
         {
+            Toast.makeText(this, btn.getText(), Toast.LENGTH_SHORT).show();
             btn.setText(getString(R.string.x_mark));
             lastSelectionWasX = true;
+            btn.setEnabled(false);
         }
-        else
+        else if (btnText.contains("") && lastSelectionWasX)
         {
+            Toast.makeText(this, btn.getText(), Toast.LENGTH_SHORT).show();
             btn.setText(getString(R.string.o_mark));
             lastSelectionWasX = false;
+            btn.setEnabled(false);
         }
+
     }
 
     /**
@@ -95,23 +110,37 @@ public class MainActivity extends AppCompatActivity {
      */
     public void resetBoard(View view)
     {
-        // Get a reference to the table layout that's currently holding all of our buttons
-        TableLayout gameBoard = findViewById(R.id.game_board);
-        // Create a list of our board buttons
-        ArrayList<View> boardButtons = gameBoard.getTouchables();
-
-        // For each button in the list, if the object is actually a button, set its
-        // internal text to a blank string
-        for (View btn : boardButtons)
+        // For each button in our button array, if the button isn't enabled, reenable it and clear
+        // the text within it
+        for (Button button : buttons)
         {
-            if (btn instanceof Button)
+            if (button.isEnabled() == false)
             {
-                ((Button) btn).setText("");
+                button.setEnabled(true);
+                button.setText("");
             }
         }
 
         // To make sure that after reset, the first mark during a new game is an "X",
         // set the boolean flag to false
         lastSelectionWasX = false;
+    }
+
+    private void checkForVictory()
+    {
+        boolean gridFilled = false;
+
+        for (Button button : buttons)
+        {
+            if (!button.getText().equals(""))
+            {
+                gridFilled = true;
+            }
+        }
+
+        if (gridFilled)
+        {
+
+        }
     }
 }
