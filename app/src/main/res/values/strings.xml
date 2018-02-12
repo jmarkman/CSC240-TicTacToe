@@ -2,6 +2,14 @@
     <string name="app_name">TicTacToe</string>
     <string name="action_settings">Settings</string>
     <string name="reset_btn_text">Reset</string>
+    <string name="colors_lbl">Colors</string>
     <string name="x_mark">X</string>
     <string name="o_mark">O</string>
+
+    <string-array name="colors_array">
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Yellow</item>
+    </string-array>
 </resources>
