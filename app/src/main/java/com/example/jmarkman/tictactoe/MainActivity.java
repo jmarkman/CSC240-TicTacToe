@@ -153,11 +153,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             for (Button button : btnArray)
             {
-                if (button.isEnabled() == false)
+                if (!button.isClickable())
                 {
                     button.setClickable(true);
-                    button.setText("");
                 }
+                button.setText("");
             }
         }
 
@@ -172,6 +172,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /**
+     * Method for handling items selected from the spinner
+     */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
     {
@@ -179,6 +182,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         changeSymbolColor(spinnerItem);
     }
 
+    /**
+     * Method for handling when no items are selected from the spinner
+     */
     @Override
     public void onNothingSelected(AdapterView<?> adapterView)
     {
@@ -266,6 +272,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     winView.setGravity(Gravity.CENTER);
 
                 winToast.show();
+
+                resetFlags();
             }
             else if (numTurns >= 8)
             {
@@ -275,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     drawView.setGravity(Gravity.CENTER);
                 drawToast.show();
 
+                resetFlags();
                 resetBoard();
             }
         }
@@ -282,6 +291,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             return;
         }
+    }
+
+    private void resetFlags()
+    {
+        numTurns = 0;
+        winningSide = "";
+        lastSelectionWasX = false;
     }
 
     /*
