@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CSC240-TicTacToe.iml" filepath="$PROJECT_DIR$/CSC240-TicTacToe.iml" />
-      <module fileurl="file://C:\Users\jmarkman\Documents\Code\CSC240\TicTacToe\CSC240-TicTacToe.iml" filepath="C:\Users\jmarkman\Documents\Code\CSC240\TicTacToe\CSC240-TicTacToe.iml" />
-      <module fileurl="file://C:\Users\MARKMAN\Documents\Code\CSC240\CSC240-TicTacToe\TicTacToe.iml" filepath="C:\Users\MARKMAN\Documents\Code\CSC240\CSC240-TicTacToe\TicTacToe.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

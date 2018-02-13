@@ -1,9 +1,9 @@
 /*
 CSC 240
-Homework #1 - Tic Tac Toe
+Homework #2 - Tic Tac Toe
 Jonathan Markman
 N00755695
-1/25/2018
+2/10/2018
  */
 package com.example.jmarkman.tictactoe;
 
@@ -22,14 +22,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private Button[][] buttons;
     private boolean lastSelectionWasX;
     private int numTurns = 0;
     private String winningSide;
+    private int xTextColor = Color.BLACK;
+    private int oTextColor = Color.BLACK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,19 +38,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-/*        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
-        // Implement array to hold references to buttons in the tic-tac-toe board
+        // Implement array to hold references to buttons in the tic tac toe board
         buttons = new Button[3][3];
+        // Find the ID of the first button on the tic tac toe board
         int buttonId = R.id.tttBtn1;
 
+        // Stuff the buttons into the 2D array for future use
         for (int i = 0; i < buttons.length; i++)
         {
             for (int j = 0; j < buttons[i].length; j++)
@@ -61,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Auto-generated method for populating the spinner with the colors
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -89,6 +85,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    /**
+     * Auto-generated method for handling user selections in the spinner menu
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -128,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Toast.makeText(this, btn.getResources().getResourceName(btn.getId()), Toast.LENGTH_SHORT).show();
             btn.setText(getString(R.string.x_mark));
             lastSelectionWasX = true;
+            btn.setTextColor(xTextColor);
             btn.setClickable(false);
         }
         else if (btnText.contains("") && lastSelectionWasX)
@@ -135,10 +135,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Toast.makeText(this, btn.getResources().getResourceName(btn.getId()), Toast.LENGTH_SHORT).show();
             btn.setText(getString(R.string.o_mark));
             lastSelectionWasX = false;
+            btn.setTextColor(oTextColor);
             btn.setClickable(false);
         }
 
+        // Increment the number of turns that have passed
         numTurns++;
+        // Call checkForVictory; it'll return without executing anything
         checkForVictory();
     }
 
@@ -164,16 +167,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // To make sure that after reset, the first mark during a new game is an "X",
         // set the boolean flag to false
         lastSelectionWasX = false;
+        resetFlags();
     }
 
 
+    /**
+     * Unused implementation of onClick since onItemSelected handles color change and appendSign
+     * uses the XML implementation of onClickListener
+     * @param view
+     */
     @Override
-    public void onClick(View view) {
-
+    public void onClick(View view)
+    {
+        return;
     }
 
     /**
-     * Method for handling items selected from the spinner
+     * Method for handling items selected from the spinner; call the changeSymbolColor method
+     * to change the color of the mark
      */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
@@ -183,7 +194,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Method for handling when no items are selected from the spinner
+     * Method for handling when no items are selected from the spinner. Do nothing if
+     * no item was selected.
      */
     @Override
     public void onNothingSelected(AdapterView<?> adapterView)
@@ -233,17 +245,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 {
                     if (button.getText().toString().equals("O"))
                     {
-                        button.setTextColor(colorAsInt);
+                        oTextColor = colorAsInt;
+                        button.setTextColor(oTextColor);
+                    }
+                    else
+                    {
+                        button.setTextColor(xTextColor);
                     }
                 }
                 else
                 {
                     if (button.getText().toString().equals("X"))
                     {
-                        button.setTextColor(colorAsInt);
+                        xTextColor = colorAsInt;
+                        button.setTextColor(xTextColor);
+                    }
+                    else
+                    {
+                        button.setTextColor(oTextColor);
                     }
                 }
-
             }
         }
     }
@@ -256,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         if (numTurns >= 4)
         {
+            // If there's any kind of win
             if (checkRowsForWin() || checkColsForWin() || checkDiagsForWin())
             {
                 for (Button[] btnArray : buttons)
@@ -266,24 +288,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
 
-                Toast winToast = Toast.makeText(this, winningSide + " is the victor!\nPress reset from the menu to play again!", Toast.LENGTH_LONG );
-                TextView winView = (TextView) winToast.getView().findViewById(android.R.id.message);
-                if (winView != null)
-                    winView.setGravity(Gravity.CENTER);
-
+                Toast winToast = buildFormattedToast(true);
+                // Show the victory message
                 winToast.show();
-
+                // Reset the flags, but allow the player to reset the board of their own volition
                 resetFlags();
             }
             else if (numTurns >= 8)
             {
-                Toast drawToast = Toast.makeText(this, "Draw! Everybody loses!\nPress reset from the menu to play again!", Toast.LENGTH_LONG);
-                TextView drawView = (TextView) drawToast.getView().findViewById(android.R.id.message);
-                if (drawView != null)
-                    drawView.setGravity(Gravity.CENTER);
+                Toast drawToast = buildFormattedToast(false);
+                // Show the draw message
                 drawToast.show();
-
+                // Reset the flags
                 resetFlags();
+                // Since the game was a draw, force the board to reset so the players try again
                 resetBoard();
             }
         }
@@ -293,11 +311,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Generates a formatted toast message to display upon victory
+     * @param win - boolean value; if true, there was a winning side. otherwise, the game was a draw
+     * @return a Toast object with text alignment: center
+     */
+    private Toast buildFormattedToast(boolean win)
+    {
+        if (win)
+        {
+            Toast winToast = Toast.makeText(this, winningSide + " is the victor!\nPress reset from the menu to play again!", Toast.LENGTH_LONG );
+            TextView winView = winToast.getView().findViewById(android.R.id.message);
+            if (winView != null)
+                winView.setGravity(Gravity.CENTER);
+
+            return winToast;
+        }
+        else
+        {
+            Toast drawToast = Toast.makeText(this, "Draw! Everybody loses!\nPress reset from the menu to play again!", Toast.LENGTH_LONG);
+            TextView drawView = drawToast.getView().findViewById(android.R.id.message);
+            if (drawView != null)
+                drawView.setGravity(Gravity.CENTER);
+
+            return drawToast;
+        }
+    }
+
+    /**
+     * When resetting the board, these values also need to be reset so the game resets to a fresh
+     * state
+     */
     private void resetFlags()
     {
         numTurns = 0;
         winningSide = "";
         lastSelectionWasX = false;
+        xTextColor = Color.BLACK;
+        oTextColor = Color.BLACK;
     }
 
     /*
@@ -324,6 +375,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             if (checkRowCol(buttons[i][0].getText(), buttons[i][1].getText(), buttons[i][2].getText()) == true)
             {
+                // Gets the last item in the nested array representing the row to assign the victor
                 winningSide = buttons[i][0].getText().toString();
                 return true;
             }
@@ -341,6 +393,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             if (checkRowCol(buttons[0][i].getText(), buttons[1][i].getText(), buttons[2][i].getText()) == true)
             {
+                // Gets the last item in the nested array representing the column to assign the victor
                 winningSide = buttons[0][i].getText().toString();
                 return true;
             }
@@ -359,7 +412,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (checkRowCol(buttons[0][0].getText(), buttons[1][1].getText(), buttons[2][2].getText()) == true ||
                     checkRowCol(buttons[0][2].getText(), buttons[1][1].getText(), buttons[2][0].getText()) == true)
             {
-                winningSide = buttons[i][0].getText().toString();
+                // Hardcode this to look in array 1, index 1, which is the center of the grid. This way,
+                // no matter what kind of diagnoal is being evaluated, there will be no false reports
+                // of which mark won the game
+                winningSide = buttons[1][1].getText().toString();
                 return true;
             }
 
